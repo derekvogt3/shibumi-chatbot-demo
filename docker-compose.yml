@@ -1,15 +1,10 @@
-version: '3'
-
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    ports:
-      - '5050:5050'
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
+  db:
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_USER: myuser
+    image: postgres:13
+    volumes:
+    - ./data/db:/var/lib/postgresql/data
+version: '3'
