@@ -2,8 +2,19 @@ from flask import Flask, jsonify, request, redirect, url_for
 from database.db import db, User
 import logging
 from flask_login import login_user, logout_user, login_required
+from chat.chat import chat_blueprint
+from flask_cors import CORS
+
+import os
 
 app = Flask(__name__)
+# This will enable CORS for all routes
+CORS(app)
+
+CORS(app, origins=["http://localhost:5173/"])
+
+
+app.register_blueprint(chat_blueprint)
 
 app.logger.setLevel(logging.DEBUG)
 
