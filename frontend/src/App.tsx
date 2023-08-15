@@ -1,7 +1,7 @@
 // pages/chatbot.tsx
 
-import { useState } from 'react';
-import { Button, TextField, Container, Paper, Typography } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { Button, TextField, Container, Paper, Typography, CircularProgress } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 
 type Message = {
@@ -35,6 +35,7 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const handleSendMessage = () => {
     setIsLoading(true);
@@ -43,23 +44,36 @@ export default function App() {
       sendChat(input)
         .then(data => {
           const botMessage = data.message;
+          setIsLoading(false);
           setMessages(prevMessages => [...prevMessages, { type: 'bot', content: botMessage }]);  
         })
         .catch(error => {
-            console.error('There was a problem with the fetch operation:', error.message);
+          setIsLoading(false);
+          setMessages(prevMessages => [...prevMessages, { type: 'bot', content: 'There was a problem with the fetch operation:' + error.message }]);
         });
 
       setInput('');
     }
-    setIsLoading(false);
+
   };
 
+  useEffect(() => {
+    if (chatContainerRef.current) {
+      const scrollHeight = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = scrollHeight;
+    }
+  }, [messages]);
+
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="xl">
       <Typography variant="h4" gutterBottom>
         Demo Shibumi Chatbot
       </Typography>
-      <Paper elevation={3} style={{ height: '500px', width: '80%', overflowY: 'auto', padding: '20px' }}>
+      <Paper 
+        elevation={3} 
+        ref={chatContainerRef} // Attach the ref here
+        style={{ height: '500px', width: '90%', overflowY: 'auto', padding: '20px' }}
+      >
       {messages.map((message, index) => (
         <div 
           key={index} 
@@ -85,11 +99,11 @@ export default function App() {
           </Typography>
         </div>
       ))}
-      {isLoading && (
-        <Typography align="left" style={{ padding: '10px 15px', borderRadius: '20px', background: '#e5e5ea' }}>
-          ...
-        </Typography>
-      )}
+        {isLoading && (
+          <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '10px 15px' }}>
+            <CircularProgress size={20} />
+          </div>
+        )}
       </Paper>
       <div style={{ display: 'flex', marginTop: '20px' }}>
         <TextField
