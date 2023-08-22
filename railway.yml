@@ -1,0 +1,26 @@
+services:
+  frontend:
+    image: Dockerfile.frontend
+    build:
+      context: ./frontend
+    ports:
+      - 3000
+    volumes:
+      - ./frontend:/app
+    check:
+      http:
+        port: 3000
+        path: / # Adjust this path to the actual health check endpoint if available
+
+  backend:
+    image: Dockerfile.backend
+    build:
+      context: ./backend
+    ports:
+      - 5050
+    volumes:
+      - ./backend:/app
+    check:
+      tcp:
+        port: 5050
+
