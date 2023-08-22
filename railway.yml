@@ -10,7 +10,7 @@ services:
     check:
       http:
         port: 3000
-        path: / # Adjust this path to the actual health check endpoint if available
+        path: /
 
   backend:
     image: Dockerfile.backend
