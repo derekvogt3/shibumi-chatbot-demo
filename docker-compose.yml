@@ -1,4 +1,14 @@
 services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+    - db
+    ports:
+    - 5050:5050
+    volumes:
+    - ./backend:/app
   db:
     environment:
       POSTGRES_DB: mydatabase
@@ -7,4 +17,12 @@ services:
     image: postgres:13
     volumes:
     - ./data/db:/var/lib/postgresql/data
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+    - 3000:3000
+    volumes:
+    - ./frontend:/app
 version: '3'
