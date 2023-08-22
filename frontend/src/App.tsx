@@ -9,17 +9,17 @@ type Message = {
   content: string;
 };
 
-function sendChat(query: string): Promise<any> {
+function sendChat(query: string, conversation: string): Promise<any> {
   // Define the endpoint URL
   const apiUrl = 'http://localhost:5050/chat';
-
-  // Send the POST request
+  const body = JSON.stringify({ query: query, conversation: conversation })
+  // Send the POST request 
   return fetch(apiUrl, {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ query: query })  // Convert the query object to JSON string
+      body: body  // Convert the query object to JSON string
   })
   .then(response => {
       // Check if the request was successful
@@ -40,8 +40,9 @@ export default function App() {
   const handleSendMessage = () => {
     setIsLoading(true);
     if (input.trim()) {
+      let conversation = messages.length > 4 ? [...messages].slice(-5) : [...messages]
       setMessages([...messages, { type: 'user', content: input.trim() }]);
-      sendChat(input)
+      sendChat(input, JSON.stringify(conversation))
         .then(data => {
           const botMessage = data.message;
           setIsLoading(false);
